@@ -1,4 +1,5 @@
 package com.speechify.LRUCache;
+import java.util.*;
 
 /**
  *
@@ -13,6 +14,30 @@ package com.speechify.LRUCache;
 
 public class LRUCacheProvider {
     public static <T> LRUCache<T> createLRUCache(CacheLimits options) {
-        throw new UnsupportedOperationException("Implement this function");
+        if(options== null)
+        {
+            throw new UnsupportedOperationException("Implement this function");
+        }
+        final int maxsize=options.getMaxItemsCount();
+        final int intitialcapacity=Math.max(1,maxsize);
+
+        return new LRUCache<T>() {
+            private final Map<String, T> map = new LinkedHashMap<String, T>(intitialcapacity, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, T> eldest) {
+                    return size() > maxsize;
+                }
+            };
+
+            @Override
+            public synchronized T get(String key) {
+                return map.get(key);
+            }
+
+            @Override
+            public synchronized void set(String key, T value) {
+                map.put(key, value);
+            }
+        };
     }
 }
